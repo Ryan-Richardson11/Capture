@@ -8,24 +8,20 @@ import numpy as np
 class GameCapture:
     def __init__(self, window):
         self.window = window
-        self.window.title = "Game Capture"
-        self.save_path = os.path.join(os.path.expanduser("~"), "Videos")
+        self.window.title("Game Capture")
+        self.window.minsize(1000, 500)
+        self.save_path = os.path.join(
+            os.path.expanduser("~"), "Videos", "gameplay.mp4")
         self.recording = False
+        button_font = ("Helvetica", 12, "bold")
 
         self.record_button = tk.Button(
-            text="Record", command=self.record_gameplay)
-        self.record_button.pack()
+            text="Record", bg="green", width=10, height=5, font=button_font, command=self.record_gameplay)
+        self.record_button.pack(anchor="center", pady=10)
 
-        self.stop_button = tk.Button(text="Stop", command=self.stop_recording)
-        self.stop_button.pack()
-
-    # def press_record(self):
-    #     record_button = tk.Button(text="Record", command=self.record_gameplay)
-    #     record_button.pack()
-
-    # def press_stop(self):
-    #     stop_button = tk.Button(text="Stop", command=self.stop_recording)
-    #     stop_button.pack()
+        self.stop_button = tk.Button(
+            text="Stop", bg="red", width=10, height=5, font=button_font, command=self.stop_recording)
+        self.stop_button.pack(anchor="center", pady=10)
 
     def record_gameplay(self):
         recording = True
