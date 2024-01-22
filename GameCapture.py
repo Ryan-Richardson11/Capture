@@ -14,6 +14,7 @@ class GameCapture:
         self.window.minsize(1000, 500)
         self.recording = False
         self.gameplay = None
+        self.frame_rate = 60.0
 
         button_font = ("Helvetica", 12, "bold")
         self.record_button = tk.Button(
@@ -27,13 +28,13 @@ class GameCapture:
     def record_gameplay(self):
         self.recording = True
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        fps = 30.0
         resolution = (1920, 1080)
+        time_stamp = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
         self.save_path = os.path.join(os.path.expanduser(
-            "~"), "Videos", f"gameplay{dt.date.today()}.mp4")
+            "~"), "Videos", f"gameplay_{time_stamp}.mp4")
 
         self.gameplay = cv2.VideoWriter(
-            self.save_path, fourcc, fps, resolution)
+            self.save_path, fourcc, self.frame_rate, resolution)
 
         def capture_loop():
             while self.recording:
@@ -43,7 +44,7 @@ class GameCapture:
                 if self.gameplay:
                     self.gameplay.write(cur_frame)
 
-        threading.Thread(target=capture_loop).start()
+        threading.Thread(target=capture_loop, daemon=True).start()
 
     def stop_recording(self):
         self.recording = False
