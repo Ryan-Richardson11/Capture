@@ -25,7 +25,7 @@ class GameCapture:
 
     def record_gameplay(self):
         recording = True
-        fourcc = cv2.VideoWriter_fourcc(*"XVID")
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         fps = 30.0
         resolution = (1920, 1080)
 
