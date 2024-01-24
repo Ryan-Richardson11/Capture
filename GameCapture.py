@@ -14,7 +14,7 @@ class GameCapture:
         self.window.minsize(1000, 500)
         self.recording = False
         self.gameplay = None
-        self.frame_rate = 24.0
+        self.frame_rate = 60.0
 
         button_font = ("Helvetica", 12, "bold")
         self.record_button = tk.Button(
