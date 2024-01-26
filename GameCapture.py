@@ -14,7 +14,7 @@ class GameCapture:
         self.window.minsize(1000, 500)
         self.recording = False
         self.gameplay = None
-        self.frame_rate = 60.0
+        self.frame_rate = 30.0
 
         button_font = ("Helvetica", 12, "bold")
         self.record_button = tk.Button(
@@ -37,12 +37,25 @@ class GameCapture:
             self.save_path, fourcc, self.frame_rate, resolution)
 
         def capture_loop():
+            start_time = dt.datetime.now()
+            frame_count = 0
             while self.recording:
                 screenshot = pyautogui.screenshot()
                 cur_frame = cv2.cvtColor(
                     np.array(screenshot), cv2.COLOR_RGB2BGR)
+
                 if self.gameplay:
                     self.gameplay.write(cur_frame)
+                    frame_count += 1
+
+                    # Calculate elapsed time and dynamically adjust frame rate
+                    elapsed_time = (dt.datetime.now() -
+                                    start_time).total_seconds()
+                    if elapsed_time >= 1.0:
+                        current_fps = frame_count / elapsed_time
+                        print(f"Current FPS: {current_fps}")
+                        frame_count = 0
+                        start_time = dt.datetime.now()
 
         threading.Thread(target=capture_loop, daemon=True).start()
 
