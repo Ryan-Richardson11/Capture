@@ -16,6 +16,7 @@ class GameCapture:
         self.gameplay = None
         self.frame_rate = 30.0
 
+        # Tkinter button styles
         button_font = ("Helvetica", 12, "bold")
         self.record_button = tk.Button(
             text="Record", bg="green", width=10, height=5, font=button_font, command=self.record_gameplay)
