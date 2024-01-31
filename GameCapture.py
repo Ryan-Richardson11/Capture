@@ -37,6 +37,8 @@ class GameCapture:
         self.gameplay = cv2.VideoWriter(
             self.save_path, fourcc, self.frame_rate, resolution)
 
+        # Incorrect logic to get correct video framerate when played back
+
         def capture_loop():
             start_time = dt.datetime.now()
             frame_count = 0
