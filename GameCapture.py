@@ -43,6 +43,7 @@ class GameCapture:
             start_time = dt.datetime.now()
             frame_count = 0
             while self.recording:
+                # *** Replace pyautogui with more advanced library ***
                 screenshot = pyautogui.screenshot()
                 cur_frame = cv2.cvtColor(
                     np.array(screenshot), cv2.COLOR_RGB2BGR)
