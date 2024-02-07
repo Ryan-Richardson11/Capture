@@ -22,6 +22,10 @@ class GameCapture:
             text="Record", bg="green", width=10, height=5, font=button_font, command=self.record_gameplay)
         self.record_button.pack(anchor="center", pady=10)
 
+        self.play_button = tk.Button(
+            text="Play", bg="blue", width=10, height=5, font=button_font, command=self.play_gameplay)
+        self.play_button.pack(anchor="center", pady=10)
+
         self.stop_button = tk.Button(
             text="Stop", bg="red", width=10, height=5, font=button_font, command=self.stop_recording)
         self.stop_button.pack(anchor="center", pady=10)
@@ -36,8 +40,6 @@ class GameCapture:
 
         self.gameplay = cv2.VideoWriter(
             self.save_path, fourcc, self.frame_rate, resolution)
-
-        # Incorrect logic to get correct video framerate when played back
 
         def capture_loop():
             start_time = dt.datetime.now()
@@ -67,6 +69,24 @@ class GameCapture:
         self.recording = False
         if self.gameplay:
             self.gameplay.release()
+
+    def play_gameplay(self):
+        cap = cv2.VideoCapture(self.save_path)
+        if not cap.isOpened():
+            print("Error opening video file")
+            return
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            cv2.imshow("Gameplay", frame)
+            if cv2.waitKey(int(1000 / self.frame_rate)) & 0xFF == ord('q'):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
 
     def identify_game(self):
         pass
