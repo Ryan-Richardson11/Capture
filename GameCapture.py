@@ -5,6 +5,7 @@ import os
 import pyautogui
 import numpy as np
 import datetime as dt
+from screenshot import ScreenShot
 
 
 class GameCapture:
@@ -14,7 +15,9 @@ class GameCapture:
         self.window.minsize(1000, 500)
         self.recording = False
         self.gameplay = None
-        self.frame_rate = 30.0
+        self.frame_rate = 24.0
+        # Instance of ScreenShot class created
+        self.screenshot = ScreenShot()
 
         # UPDATE Tkinter button Styles *********
         button_font = ("Helvetica", 12, "bold")
@@ -23,17 +26,21 @@ class GameCapture:
         self.record_button.pack(anchor="center", pady=10)
 
         self.play_button = tk.Button(
-            text="Play", bg="blue", width=10, height=5, font=button_font, command=self.play_gameplay)
+            text="Playback", bg="blue", width=10, height=5, font=button_font, command=self.play_gameplay)
         self.play_button.pack(anchor="center", pady=10)
 
         self.stop_button = tk.Button(
             text="Stop", bg="red", width=10, height=5, font=button_font, command=self.stop_recording)
         self.stop_button.pack(anchor="center", pady=10)
 
+        self.screenshot_button = tk.Button(
+            text="Screenshot", bg="gray", width=10, height=5, font=button_font, command=self.screenshot.screen_capture)
+        self.screenshot_button.pack(anchor="center", pady=10)
+
     def record_gameplay(self):
         self.recording = True
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        resolution = (1920, 1080)
+        resolution = (1600, 900)
         time_stamp = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
         self.save_path = os.path.join(os.path.expanduser(
             "~"), "Videos", f"gameplay_{time_stamp}.mp4")
