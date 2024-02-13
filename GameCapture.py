@@ -81,6 +81,7 @@ class GameCapture:
 
         cap.release()
         cv2.destroyAllWindows()
+    # implements identifyWindow class
 
     def identify_game(self):
         pass
