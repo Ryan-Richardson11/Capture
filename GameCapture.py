@@ -8,6 +8,7 @@ import datetime as dt
 from screenshot import ScreenShot
 from mss import mss
 from PIL import Image
+import time
 
 
 class GameCapture:
@@ -60,16 +61,23 @@ class GameCapture:
             #         self.gameplay.write(cur_frame)
 
             # Logic using mss and PIL imports
-            dimensions = {'top': 100, 'left': 0, 'width': 400, 'height': 300}
-            frame = mss()
-            while True:
-                cur_frame = frame.grab(dimensions)
-                cv2.imshow('screen', np.array(cur_frame))
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    cv2.destroyAllWindows()
-                    break
+            with mss() as sct:
+                while True:
+                    screenshot = sct.grab()
+                    cur_frame = cv2.cvtColor(
+                        np.array(screenshot), cv2.COLOR_RGB2BGR)
 
-        threading.Thread(target=capture_loop, daemon=True).start()
+                    if self.gameplay:
+                        self.gameplay.write(cur_frame)
+
+                    cv2.imshow('screen', cur_frame)
+                    time.sleep(1 / self.frame_rate)
+
+                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                        cv2.destroyAllWindows()
+                        break
+
+        threading.Thread(target=capture_loop).start()
 
     def stop_recording(self):
         self.recording = False
