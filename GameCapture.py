@@ -6,6 +6,8 @@ import pyautogui
 import numpy as np
 import datetime as dt
 from screenshot import ScreenShot
+from mss import mss
+from PIL import Image
 
 
 class GameCapture:
@@ -49,13 +51,23 @@ class GameCapture:
             self.save_path, fourcc, self.frame_rate, resolution)
 
         def capture_loop():
-            while self.recording:
-                screenshot = pyautogui.screenshot()
-                cur_frame = cv2.cvtColor(
-                    np.array(screenshot), cv2.COLOR_RGB2BGR)
+            # while self.recording:
+            #     screenshot = pyautogui.screenshot()
+            #     cur_frame = cv2.cvtColor(
+            #         np.array(screenshot), cv2.COLOR_RGB2BGR)
 
-                if self.gameplay:
-                    self.gameplay.write(cur_frame)
+            #     if self.gameplay:
+            #         self.gameplay.write(cur_frame)
+
+            # Logic using mss and PIL imports
+            dimensions = {'top': 100, 'left': 0, 'width': 400, 'height': 300}
+            frame = mss()
+            while True:
+                cur_frame = frame.grab(dimensions)
+                cv2.imshow('screen', np.array(cur_frame))
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    cv2.destroyAllWindows()
+                    break
 
         threading.Thread(target=capture_loop, daemon=True).start()
 
