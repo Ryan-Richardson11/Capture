@@ -62,26 +62,22 @@ class GameCapture:
 
             # Logic using mss and PIL imports
             with mss() as sct:
-                while True:
-                    screenshot = sct.grab()
+                while self.recording:
+                    monitor = sct.monitors[1]
+                    screenshot = sct.grab(monitor)
                     cur_frame = cv2.cvtColor(
                         np.array(screenshot), cv2.COLOR_RGB2BGR)
 
-                    if self.gameplay:
+                    if self.gameplay.isOpened():
                         self.gameplay.write(cur_frame)
 
-                    cv2.imshow('screen', cur_frame)
-                    time.sleep(1 / self.frame_rate)
-
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                        cv2.destroyAllWindows()
-                        break
-
-        threading.Thread(target=capture_loop).start()
+        capture_thread = threading.Thread(target=capture_loop, daemon=True).start()
 
     def stop_recording(self):
         self.recording = False
         if self.gameplay:
+           if capture_thread.is_alive():
+                capture_thread.join()
             self.gameplay.release()
 
     def play_gameplay(self):
