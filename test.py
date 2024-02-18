@@ -5,10 +5,6 @@ import os
 import pyautogui
 import numpy as np
 import datetime as dt
-from screenshot import ScreenShot
-from mss import mss
-from PIL import Image
-import time
 
 
 class GameCapture:
@@ -18,9 +14,7 @@ class GameCapture:
         self.window.minsize(1000, 500)
         self.recording = False
         self.gameplay = None
-        self.frame_rate = 24.0
-        # Instance of ScreenShot class created
-        self.screenshot = ScreenShot()
+        self.frame_rate = 30.0
 
         # UPDATE Tkinter button Styles *********
         button_font = ("Helvetica", 12, "bold")
@@ -28,17 +22,13 @@ class GameCapture:
             text="Record", bg="green", width=10, height=5, font=button_font, command=self.record_gameplay)
         self.record_button.pack(anchor="center", pady=10)
 
-        # self.play_button = tk.Button(
-        #     text="Playback", bg="blue", width=10, height=5, font=button_font, command=self.play_gameplay)
-        # self.play_button.pack(anchor="center", pady=10)
+        self.play_button = tk.Button(
+            text="Playback", bg="blue", width=10, height=5, font=button_font, command=self.play_gameplay)
+        self.play_button.pack(anchor="center", pady=10)
 
         self.stop_button = tk.Button(
             text="Stop", bg="red", width=10, height=5, font=button_font, command=self.stop_recording)
         self.stop_button.pack(anchor="center", pady=10)
-
-        self.screenshot_button = tk.Button(
-            text="Screenshot", bg="gray", width=10, height=5, font=button_font, command=self.screenshot.screen_capture)
-        self.screenshot_button.pack(anchor="center", pady=10)
 
     def record_gameplay(self):
         self.recording = True
@@ -52,15 +42,13 @@ class GameCapture:
             self.save_path, fourcc, self.frame_rate, resolution)
 
         def capture_loop():
-            with mss() as sct:
-                while self.recording:
-                    monitor = sct.monitors[1]
-                    screenshot = sct.grab(monitor)
-                    cur_frame = cv2.cvtColor(
-                        np.array(screenshot), cv2.COLOR_RGB2BGR)
+            while self.recording:
+                screenshot = pyautogui.screenshot()
+                cur_frame = cv2.cvtColor(
+                    np.array(screenshot), cv2.COLOR_RGB2BGR)
 
-                    if self.gameplay:
-                        self.gameplay.write(cur_frame)
+                if self.gameplay:
+                    self.gameplay.write(cur_frame)
 
         threading.Thread(target=capture_loop, daemon=True).start()
 
@@ -69,24 +57,23 @@ class GameCapture:
         if self.gameplay:
             self.gameplay.release()
 
-    # def play_gameplay(self):
-    #     cap = cv2.VideoCapture(self.save_path)
-    #     if not cap.isOpened():
-    #         print("Error opening video file")
-    #         return
+    def play_gameplay(self):
+        cap = cv2.VideoCapture(self.save_path)
+        if not cap.isOpened():
+            print("Error opening video file")
+            return
 
-    #     while True:
-    #         ret, frame = cap.read()
-    #         if not ret:
-    #             break
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-    #         cv2.imshow("Gameplay", frame)
-    #         if cv2.waitKey(int(1000 / self.frame_rate)) & 0xFF == ord('q'):
-    #             break
+            cv2.imshow("Gameplay", frame)
+            if cv2.waitKey(int(1000 / self.frame_rate)) & 0xFF == ord('q'):
+                break
 
-    #     cap.release()
-    #     cv2.destroyAllWindows()
-    # implements identifyWindow class
+        cap.release()
+        cv2.destroyAllWindows()
 
     def identify_game(self):
         pass
