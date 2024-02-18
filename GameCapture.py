@@ -7,7 +7,7 @@ import numpy as np
 import datetime as dt
 from screenshot import ScreenShot
 from mss import mss
-from PIL import Image
+from PIL import ImageGrab
 import time
 
 
@@ -42,7 +42,7 @@ class GameCapture:
 
     def record_gameplay(self):
         self.recording = True
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        fourcc = cv2.VideoWriter_fourcc("m", "p", "4", "v")
         resolution = (1920, 1080)
         time_stamp = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
         self.save_path = os.path.join(os.path.expanduser(
@@ -52,15 +52,22 @@ class GameCapture:
             self.save_path, fourcc, self.frame_rate, resolution)
 
         def capture_loop():
-            with mss() as sct:
-                while self.recording:
-                    monitor = sct.monitors[1]
-                    screenshot = sct.grab(monitor)
-                    cur_frame = cv2.cvtColor(
-                        np.array(screenshot), cv2.COLOR_RGB2BGR)
+            # with mss() as sct:
+            #     while self.recording:
+            #         monitor = sct.monitors[1]
+            #         screenshot = sct.grab(monitor)
+            #         cur_frame = cv2.cvtColor(
+            #             np.array(screenshot), cv2.COLOR_RGB2BGR)
 
-                    if self.gameplay:
-                        self.gameplay.write(cur_frame)
+            #         if self.gameplay:
+            #             self.gameplay.write(cur_frame)
+
+            while self.recording:
+                img = ImageGrab.grab(bbox=(0, 0, 1920, 1080))
+                array_img = np.array(img)
+                cur_frame = cv2.cvtColor(array_img, cv2.COLOR_BGR2RGB)
+                if self.gameplay:
+                    self.gameplay.write(cur_frame)
 
         threading.Thread(target=capture_loop, daemon=True).start()
 
@@ -81,12 +88,11 @@ class GameCapture:
     #             break
 
     #         cv2.imshow("Gameplay", frame)
-    #         if cv2.waitKey(int(1000 / self.frame_rate)) & 0xFF == ord('q'):
+    #         if cv2.waitKey(20) & 0xFF == ord('q'):
     #             break
 
     #     cap.release()
     #     cv2.destroyAllWindows()
-    # implements identifyWindow class
 
     def identify_game(self):
         pass
