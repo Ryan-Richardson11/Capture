@@ -63,6 +63,7 @@ class GameCapture:
             #             self.gameplay.write(cur_frame)
 
             while self.recording:
+                # Update Logic for image grab
                 img = ImageGrab.grab(bbox=(0, 0, 1920, 1080))
                 array_img = np.array(img)
                 cur_frame = cv2.cvtColor(array_img, cv2.COLOR_BGR2RGB)
@@ -76,6 +77,7 @@ class GameCapture:
         if self.gameplay:
             self.gameplay.release()
 
+    # TEMP FUNCTION:
     # def play_gameplay(self):
     #     cap = cv2.VideoCapture(self.save_path)
     #     if not cap.isOpened():
